@@ -21,14 +21,14 @@ if __name__ == '__main__':
     # parser.add_argument('--train_cameras', default=False, action="store_true", help='If set, optimizing also camera location.')
 
     opt = parser.parse_args()
-
+    print(opt)
     if opt.gpu == "auto":
         #deviceIDs = GPUtil.getAvailable(order='memory', limit=1, maxLoad=0.5, maxMemory=0.5, includeNan=False, excludeID=[], excludeUUID=[])
         #gpu = deviceIDs[0]
         gpu = opt.gpu
     else:
         gpu = opt.gpu
-    print(opt)
+
     trainrunner = IDRTrainRunner(conf=opt.conf,
                                  data_dir=opt.data_dir,
                                  batch_size=opt.batch_size,
