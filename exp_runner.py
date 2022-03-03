@@ -6,8 +6,7 @@ import argparse
 #from training.idr_train import IDRTrainRunner
 from idr_train import IDRTrainRunner
 
-if __name__ == '__main__':
-    print('test')
+def train_all():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='fill_in_data_dir')
     parser.add_argument('--batch_size', type=int, default=8, help='input batch size')
@@ -15,16 +14,19 @@ if __name__ == '__main__':
     parser.add_argument('--conf', type=str, default='./confs/mvsdf_dtu.conf')
     parser.add_argument('--expname', type=str, default='test')
     parser.add_argument('--gpu', type=str, default='auto', help='GPU to use [default: GPU auto]')
-    parser.add_argument('--is_continue', default=False, action="store_true", help='If set, indicates continuing from a previous run.')
-    parser.add_argument('--timestamp', default='latest', type=str, help='The timestamp of the run to be used in case of continuing from a previous run.')
-    parser.add_argument('--checkpoint', default='latest',type=str,help='The checkpoint epoch number of the run to be used in case of continuing from a previous run.')
+    parser.add_argument('--is_continue', default=False, action="store_true",
+                        help='If set, indicates continuing from a previous run.')
+    parser.add_argument('--timestamp', default='latest', type=str,
+                        help='The timestamp of the run to be used in case of continuing from a previous run.')
+    parser.add_argument('--checkpoint', default='latest', type=str,
+                        help='The checkpoint epoch number of the run to be used in case of continuing from a previous run.')
     # parser.add_argument('--train_cameras', default=False, action="store_true", help='If set, optimizing also camera location.')
 
     opt = parser.parse_args()
     print(opt)
     if opt.gpu == "auto":
-        #deviceIDs = GPUtil.getAvailable(order='memory', limit=1, maxLoad=0.5, maxMemory=0.5, includeNan=False, excludeID=[], excludeUUID=[])
-        #gpu = deviceIDs[0]
+        # deviceIDs = GPUtil.getAvailable(order='memory', limit=1, maxLoad=0.5, maxMemory=0.5, includeNan=False, excludeID=[], excludeUUID=[])
+        # gpu = deviceIDs[0]
         gpu = opt.gpu
     else:
         gpu = opt.gpu
@@ -43,3 +45,8 @@ if __name__ == '__main__':
                                  )
 
     trainrunner.run()
+
+
+if __name__ == '__main__':
+    print('test')
+
