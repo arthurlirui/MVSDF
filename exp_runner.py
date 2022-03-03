@@ -65,4 +65,15 @@ if __name__ == '__main__':
 
     opt = parser.parse_args()
     print(opt)
+    trainrunner = IDRTrainRunner(conf=opt.conf,
+                                 data_dir=opt.data_dir,
+                                 batch_size=opt.batch_size,
+                                 nepochs=opt.nepoch,
+                                 expname=opt.expname,
+                                 gpu_index=opt.gpu,
+                                 exps_folder_name='exps',
+                                 is_continue=opt.is_continue,
+                                 timestamp=opt.timestamp,
+                                 checkpoint=opt.checkpoint,
+                                 train_cameras=False)
 
