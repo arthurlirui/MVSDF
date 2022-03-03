@@ -7,7 +7,7 @@ import argparse
 from idr_train import IDRTrainRunner
 
 if __name__ == '__main__':
-
+    print('test')
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='fill_in_data_dir')
     parser.add_argument('--batch_size', type=int, default=8, help='input batch size')
