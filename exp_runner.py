@@ -81,4 +81,5 @@ if __name__ == '__main__':
                                  timestamp=opt.timestamp,
                                  checkpoint=opt.checkpoint,
                                  train_cameras=False)
+    trainrunner.run()
 
