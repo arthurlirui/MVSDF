@@ -18,11 +18,12 @@ class SceneDataset(torch.utils.data.Dataset):
 
     def __init__(self,
                  data_dir,
+                 data_name,
                  train_cameras,
                  cam_file=None
                  ):
 
-        self.instance_dir = data_dir
+        self.instance_dir = os.path.join(data_dir, data_name, 'imfunc4')
         self.only_cam = (os.environ.get('IDR_USE_ENV', '0') == '1' and os.environ.get('IDR_ONLY_CAM', '0') == '1')
 
         if self.only_cam:
@@ -100,16 +101,29 @@ class SceneDataset(torch.utils.data.Dataset):
                 object_mask = object_mask.reshape(-1)
                 self.object_masks.append(torch.from_numpy(object_mask).bool())
             
-            self.pair = load_pair(f'{self.instance_dir}/../pair.txt')
+            #self.pair = load_pair(f'{self.instance_dir}/../pair.txt')
+            self.pair = load_pair(os.path.join(data_dir, data_name, 'pair.txt'))
             self.num_src = 2  # NOTE: hard code
+            # self.depths = torch.stack(
+            #     [torch.from_numpy(np.ascontiguousarray(
+            #         load_pfm(f'{self.instance_dir}/depth/{i:03}.pfm'))).to(torch.float32)
+            #         for i in range(self.n_images)], dim=0).unsqueeze(1)
+
             self.depths = torch.stack(
                 [torch.from_numpy(np.ascontiguousarray(
-                    load_pfm(f'{self.instance_dir}/depth/{i:03}.pfm'))).to(torch.float32) 
-                    for i in range(self.n_images)], dim=0).unsqueeze(1)
+                    load_pfm(os.path.join(data_dir, data_name, 'imfunc4', 'depth', f'{i:03}.pfm')))).to(torch.float32)
+                 for i in range(self.n_images)], dim=0).unsqueeze(1)
+
+            # self.depth_cams = torch.stack(
+            #     [torch.from_numpy(
+            #         load_cam(f'{self.instance_dir}/../cam_{i:08}_flow3.txt', 256, 1)).to(torch.float32)
+            #         for i in range(self.n_images)], dim=0)
+
             self.depth_cams = torch.stack(
                 [torch.from_numpy(
-                    load_cam(f'{self.instance_dir}/../cam_{i:08}_flow3.txt', 256, 1)).to(torch.float32) 
-                    for i in range(self.n_images)], dim=0)
+                    load_cam(os.path.join(data_dir, data_name, f'cam_{i:08}_flow3.txt'), 256, 1)).to(torch.float32)
+                 for i in range(self.n_images)], dim=0)
+
             self.feat_img_scale = conf.feat_img_scale
             self.cams_hd = torch.stack(
                 [scale_camera(self.depth_cams[i], self.feat_img_scale) for i in range(self.n_images)]  # NOTE: hard code

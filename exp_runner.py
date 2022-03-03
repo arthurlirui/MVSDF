@@ -50,6 +50,7 @@ def train_all():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='fill_in_data_dir')
+    parser.add_argument('--data_name', type=str, default='data_dir_name')
     parser.add_argument('--batch_size', type=int, default=8, help='input batch size')
     parser.add_argument('--nepoch', type=int, default=1800, help='number of epochs to train for')
     parser.add_argument('--conf', type=str, default='./confs/mvsdf_dtu.conf')
@@ -62,11 +63,15 @@ if __name__ == '__main__':
     parser.add_argument('--checkpoint', default='latest', type=str,
                         help='The checkpoint epoch number of the run to be used in case of continuing from a previous run.')
     # parser.add_argument('--train_cameras', default=False, action="store_true", help='If set, optimizing also camera location.')
-
+    parser.add_argument('--root_path', type=str,
+                        default='/home/lir0b/Code/TransparenceDetection/src/neural_representation/MVSDF',
+                        help='root path')
     opt = parser.parse_args()
     print(opt)
     trainrunner = IDRTrainRunner(conf=opt.conf,
+                                 root_path=opt.root_path,
                                  data_dir=opt.data_dir,
+                                 data_name=opt.data_name,
                                  batch_size=opt.batch_size,
                                  nepochs=opt.nepoch,
                                  expname=opt.expname,

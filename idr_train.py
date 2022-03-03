@@ -11,17 +11,22 @@ from model.loss import IDRLoss
 import utils.general as utils
 import utils.plots as plt
 import model.conf as conf
-if os.environ.get('IDR_USE_ENV', '0') == '1' and os.environ.get('IDR_CONF', '') != '':
-    print('override conf: ', os.environ.get('IDR_CONF'))
-    conf = importlib.import_module(os.environ.get('IDR_CONF'))
+
+# if os.environ.get('IDR_USE_ENV', '0') == '1' and os.environ.get('IDR_CONF', '') != '':
+#     print('override conf: ', os.environ.get('IDR_CONF'))
+#     conf = importlib.import_module(os.environ.get('IDR_CONF'))
+
 
 class IDRTrainRunner():
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         torch.set_default_dtype(torch.float32)
         torch.set_num_threads(1)
 
+        self.root_path = kwargs['root_path']
+
         self.conf = ConfigFactory.parse_file(kwargs['conf'])
         self.data_dir = kwargs['data_dir']
+        self.data_name = kwargs['data_name']
         self.batch_size = kwargs['batch_size']
         self.nepochs = kwargs['nepochs']
         self.exps_folder_name = kwargs['exps_folder_name']
@@ -31,8 +36,8 @@ class IDRTrainRunner():
         self.expname = self.conf.get_string('train.expname') + '_' + kwargs['expname']
 
         if kwargs['is_continue'] and kwargs['timestamp'] == 'latest':
-            if os.path.exists(os.path.join('../',kwargs['exps_folder_name'],self.expname)):
-                timestamps = os.listdir(os.path.join('../',kwargs['exps_folder_name'],self.expname))
+            if os.path.exists(os.path.join(self.root_path, kwargs['exps_folder_name'], self.expname)):
+                timestamps = os.listdir(os.path.join(self.root_path, kwargs['exps_folder_name'], self.expname))
                 if (len(timestamps)) == 0:
                     is_continue = False
                     timestamp = None
@@ -46,8 +51,8 @@ class IDRTrainRunner():
             timestamp = kwargs['timestamp']
             is_continue = kwargs['is_continue']
 
-        utils.mkdir_ifnotexists(os.path.join('../',self.exps_folder_name))
-        self.expdir = os.path.join('../', self.exps_folder_name, self.expname)
+        utils.mkdir_ifnotexists(os.path.join(self.root_path, self.exps_folder_name))
+        self.expdir = os.path.join(self.root_path, self.exps_folder_name, self.expname)
         utils.mkdir_ifnotexists(self.expdir)
         self.timestamp = '{:%Y_%m_%d_%H_%M_%S}'.format(datetime.now())
         utils.mkdir_ifnotexists(os.path.join(self.expdir, self.timestamp))
@@ -85,7 +90,7 @@ class IDRTrainRunner():
 
         dataset_conf = self.conf.get_config('dataset')
 
-        self.train_dataset = SceneDataset(self.data_dir, self.train_cameras, **dataset_conf)
+        self.train_dataset = SceneDataset(self.data_dir, self.data_name, self.train_cameras, **dataset_conf)
 
         print('Finish loading data ...')
 
